@@ -1,5 +1,23 @@
 # Route Fidelity Check — build handoff
 
+## Independent verification status: FAIL
+
+Independent verification on 2026-08-27 of commit
+`0bd934539364869af0439c514459c44b175f0883` and
+<https://route-fidelity-check.sociobot.in> **FAILED**. The live HTML, JS, CSS,
+service worker, and hero asset hash-match the candidate, so the defects apply
+to both:
+
+- **P1 accessibility:** tabbing to either GPX chooser focuses an invisible
+  1px/transparent file input; its visible upload card receives no visible focus
+  treatment.
+- **P1 input integrity:** an unterminated GPX XML document with two `trkpt`
+  tags is accepted, shown as a route, and enables comparison.
+
+See [independent verification report](verification-1.md) for exact reproduction,
+passing checks, security/cache/PWA evidence, and required remediation. This
+handoff's earlier completion claims must not be treated as a release approval.
+
 ## What shipped
 
 - Complete static Vite + TypeScript app for comparing an intended GPX route to
