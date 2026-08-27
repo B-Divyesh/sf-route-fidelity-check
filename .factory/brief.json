@@ -1,0 +1,30 @@
+{
+  "slug": "route-fidelity-check",
+  "title": "Route Fidelity Check",
+  "territory": "utilities",
+  "user": "A cyclist or club ride leader who has a deliberate GPX route and needs to know whether a navigation app/device silently rerouted it before riders follow it.",
+  "evidence": [
+    {
+      "url": "https://github.com/organicmaps/organicmaps/issues/13236",
+      "date": "2026-07-28",
+      "quote_or_summary": "A walking-club route creator says automatic completion reconnects waypoints on a nonsensical path and requests that only segments between deliberate waypoints be optimized."
+    },
+    {
+      "url": "https://bicycles.stackexchange.com/questions/97098/ridewithgps-versus-garmin-edge-540",
+      "date": "2025-07-13",
+      "quote_or_summary": "A RideWithGPS route containing a rail trail becomes nearby roads after the Garmin handoff despite the trail being visible in Garmin's map."
+    }
+  ],
+  "recurrence": "Two independent 2025–2026 route-authoring reports describe route mutation at the handoff layer. Severity is high for group rides because the leader may discover a bad route only while navigating.",
+  "current_workaround": "Manually inspect the route in each app/device, add many shaping points, or discover the deviation after export.",
+  "incumbents_and_gap": "RideWithGPS, Garmin Connect, Komoot, and Organic Maps plan routes, but each owns its routing engine. There is no neutral, tiny preflight that compares an intended GPX line with an exported/re-rendered line.",
+  "smallest_useful_product": "Browser tool that accepts two GPX files, aligns them, highlights divergences over a user-set distance, and emits a printable cue/checklist. Non-goals: route planning, turn-by-turn navigation, accounts, or map-data editing.",
+  "success_measure": "On a 30-pair corpus of planned and exported GPX files, the tool flags 90% of known material detours and produces a reviewable result in under 15 seconds.",
+  "artifact_class": "static-web",
+  "monetization": "free — it is a focused trust-building utility that can seed later paid club export packs if demand appears.",
+  "constraints": "Process GPX locally; use permissively licensed base-map tiles only if a map preview is included; clearly distinguish geometric difference from a claim that a route is safe or legal.",
+  "est_build_effort": "M",
+  "why_distinct": "It audits a route handoff instead of competing to be the next route planner.",
+  "confidence": 5,
+  "state": "RESEARCHED"
+}
