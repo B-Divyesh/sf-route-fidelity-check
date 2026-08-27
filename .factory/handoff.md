@@ -1,4 +1,17 @@
-# Route Fidelity Check — P1 repair handoff
+# Route Fidelity Check — independent verification handoff
+
+> **Status: FAIL — do not promote.** Independent verification on 2026-08-27
+> found a P1 accessibility blocker in candidate
+> `9675bab25bca89d3e118a5239ba2ae1df3d146a6` and the byte-identical live URL
+> <https://route-fidelity-check.sociobot.in>. Axe reports the two primary
+> upload helper captions at 2.21:1 contrast (required: 4.5:1), a **serious**
+> `color-contrast` violation. The visible keyboard chooser and malformed-XML
+> repairs pass; clean install, 8/8 tests, build, browser regression, local-only
+> privacy/network, PWA update/offline reload, security headers, and budgets
+> pass. Fix the caption contrast and rerun axe at desktop and 390px. See
+> `.factory/verification-2.md` for full exact evidence, hashes, and defects.
+
+## Superseded builder repair handoff
 
 ## Status
 
