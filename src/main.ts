@@ -171,7 +171,7 @@ function renderResult(result: ComparisonResult, intended: RouteData, exported: R
   const hasDivergence = result.divergences.length > 0;
   results.classList.toggle('is-clear', !hasDivergence);
   byId('results-heading').textContent = hasDivergence
-    ? `${result.divergences.length} route change${result.divergences.length === 1 ? '' : 's'} need a look`
+    ? `${result.divergences.length} route change${result.divergences.length === 1 ? ' needs' : 's need'} a look`
     : 'The route lines stay within your threshold';
   byId('verdict-copy').textContent = hasDivergence
     ? `${formatDistance(result.affectedLengthM)} of the intended route falls within flagged review zones. Check these before sharing the export.`
@@ -217,12 +217,19 @@ compareButton.addEventListener('click', () => {
   }
   thresholdInput.setCustomValidity('');
   compareButton.classList.add('is-working');
+  byId('analysis-error').textContent = '';
   byId('analysis-status').textContent = 'Comparing routes…';
   window.setTimeout(() => {
-    lastResult = compareRoutes(intended.points, exported.points, threshold);
-    renderResult(lastResult, intended, exported);
-    compareButton.classList.remove('is-working');
-    byId('analysis-status').textContent = `Comparison complete. ${lastResult.divergences.length} review zones found.`;
+    try {
+      lastResult = compareRoutes(intended.points, exported.points, threshold);
+      renderResult(lastResult, intended, exported);
+      byId('analysis-status').textContent = `Comparison complete. ${lastResult.divergences.length} review zones found.`;
+    } catch {
+      byId('analysis-error').textContent = 'The comparison could not finish. Try simplified GPX exports with fewer track points.';
+      byId('analysis-status').textContent = 'The comparison could not finish.';
+    } finally {
+      compareButton.classList.remove('is-working');
+    }
   }, 30);
 });
 

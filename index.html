@@ -74,6 +74,7 @@
           </button>
         </div>
         <p id="analysis-status" class="sr-only" role="status" aria-live="polite"></p>
+        <p id="analysis-error" class="analysis-error" role="alert"></p>
       </section>
 
       <section id="results" class="results" aria-labelledby="results-heading" hidden>
@@ -84,10 +85,10 @@
         </div>
 
         <dl class="metrics">
-          <div><dt>Fidelity</dt><dd id="metric-fidelity">—</dd><small>samples within threshold</small></div>
-          <div><dt>Largest separation</dt><dd id="metric-separation">—</dd><small>nearest-line distance</small></div>
-          <div><dt>Distance change</dt><dd id="metric-distance">—</dd><small>exported minus intended</small></div>
-          <div><dt>Review zones</dt><dd id="metric-zones">—</dd><small>material divergences</small></div>
+          <div><dt>Fidelity</dt><dd><span id="metric-fidelity">—</span><small>samples within threshold</small></dd></div>
+          <div><dt>Largest separation</dt><dd><span id="metric-separation">—</span><small>nearest-line distance</small></dd></div>
+          <div><dt>Distance change</dt><dd><span id="metric-distance">—</span><small>exported minus intended</small></dd></div>
+          <div><dt>Review zones</dt><dd><span id="metric-zones">—</span><small>material divergences</small></dd></div>
         </dl>
 
         <div class="map-section">
