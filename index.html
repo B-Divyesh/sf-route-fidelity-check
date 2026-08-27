@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#061413" />
+    <meta name="description" content="Compare an intended GPX route with an exported route and spot silent rerouting before you ride." />
+    <title>Route Fidelity Check — compare GPX route handoffs</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to route comparison</a>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Route Fidelity Check home">
+        <svg aria-hidden="true" viewBox="0 0 32 32" width="32" height="32"><path d="M5 23c4-11 7-11 11-4s7 7 11-8"/><path d="M5 18c4-11 8-11 12-4s6 5 10-5"/></svg>
+        <span>Route fidelity check</span>
+      </a>
+      <div id="network-status" class="network-status" role="status" aria-live="polite">Local-only · ready</div>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span> GPX handoff preflight</p>
+          <h1 id="page-title">Did your route make the trip?</h1>
+          <p class="lede">Compare the line you planned with the one your app or device exported. Find silent detours before your riders do.</p>
+          <div class="privacy-note">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0110 0v3M5 10h14v10H5z"/></svg>
+            Files stay on this device. Nothing is uploaded.
+          </div>
+        </div>
+        <figure class="hero-art">
+          <img src="/assets/route-landscape.webp" width="1200" height="800" fetchpriority="high" decoding="async" alt="Two luminous route lines cross a dark glass landscape; one line detours before rejoining." />
+          <figcaption><i class="line mint"></i> Intended <i class="line blue"></i> Exported <i class="line coral"></i> Difference</figcaption>
+        </figure>
+      </section>
+
+      <section class="workbench" aria-labelledby="compare-heading">
+        <div class="section-heading">
+          <div><p class="step">01 / Add routes</p><h2 id="compare-heading">Choose the two GPX files</h2></div>
+          <button id="load-example" class="text-button" type="button">Try an example</button>
+        </div>
+
+        <div class="upload-grid">
+          <div class="upload-panel" data-kind="intended">
+            <div class="route-label"><span class="route-number">A</span><div><strong>Intended route</strong><small>The original line you meant to ride</small></div></div>
+            <input id="intended-file" class="file-input" type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml" />
+            <label class="drop-zone" for="intended-file">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5l5 5M5 14v5h14v-5"/></svg>
+              <span><b>Choose intended GPX</b><em>or drop it here · up to 15 MB</em></span>
+            </label>
+            <div id="intended-manifest" class="manifest" hidden></div>
+            <p id="intended-error" class="file-error" role="alert"></p>
+          </div>
+          <div class="upload-panel" data-kind="exported">
+            <div class="route-label"><span class="route-number blue">B</span><div><strong>Exported route</strong><small>The line from the app or device</small></div></div>
+            <input id="exported-file" class="file-input" type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml" />
+            <label class="drop-zone" for="exported-file">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5l5 5M5 14v5h14v-5"/></svg>
+              <span><b>Choose exported GPX</b><em>or drop it here · up to 15 MB</em></span>
+            </label>
+            <div id="exported-manifest" class="manifest" hidden></div>
+            <p id="exported-error" class="file-error" role="alert"></p>
+          </div>
+        </div>
+
+        <div class="compare-controls">
+          <div class="threshold-control">
+            <label for="threshold">Flag separation over</label>
+            <div class="threshold-input"><input id="threshold" type="number" inputmode="numeric" min="10" max="500" step="10" value="50" aria-describedby="threshold-help" /><span>metres</span></div>
+            <p id="threshold-help">50 m is a useful first pass for road and trail handoffs.</p>
+          </div>
+          <button id="compare-button" class="primary-button" type="button" disabled>
+            <span>Compare routes</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-5-5l5 5-5 5"/></svg>
+          </button>
+        </div>
+        <p id="analysis-status" class="sr-only" role="status" aria-live="polite"></p>
+      </section>
+
+      <section id="results" class="results" aria-labelledby="results-heading" hidden>
+        <div class="verdict">
+          <div class="verdict-icon" id="verdict-icon" aria-hidden="true"></div>
+          <div><p class="step">02 / Review</p><h2 id="results-heading"></h2><p id="verdict-copy"></p></div>
+          <button id="print-button" class="secondary-button" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 9V4h10v5M7 17H5a2 2 0 01-2-2v-4a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2h-2M7 14h10v7H7z"/></svg> Print checklist</button>
+        </div>
+
+        <dl class="metrics">
+          <div><dt>Fidelity</dt><dd id="metric-fidelity">—</dd><small>samples within threshold</small></div>
+          <div><dt>Largest separation</dt><dd id="metric-separation">—</dd><small>nearest-line distance</small></div>
+          <div><dt>Distance change</dt><dd id="metric-distance">—</dd><small>exported minus intended</small></div>
+          <div><dt>Review zones</dt><dd id="metric-zones">—</dd><small>material divergences</small></div>
+        </dl>
+
+        <div class="map-section">
+          <div class="map-heading">
+            <div><h3>Aligned route trace</h3><p>Lines are fitted to the same coordinate space. No map tiles or route services are used.</p></div>
+            <button id="reset-view" class="icon-button" type="button" hidden>Show full route</button>
+          </div>
+          <div id="route-map" class="route-map" role="img" aria-labelledby="map-title map-description"></div>
+          <div class="map-legend" aria-hidden="true"><span><i class="line mint"></i> Intended</span><span><i class="line blue"></i> Exported</span><span><i class="dash coral"></i> Over threshold</span></div>
+        </div>
+
+        <div class="review-section">
+          <div class="review-heading"><div><h3>Ride leader’s review</h3><p id="review-summary"></p></div><button id="copy-summary" class="text-button" type="button">Copy summary</button></div>
+          <ol id="divergence-list" class="divergence-list"></ol>
+          <div class="checklist">
+            <h3>Before you send the route</h3>
+            <label><input type="checkbox" /> <span>Inspect every flagged zone in the source and destination apps.</span></label>
+            <label><input type="checkbox" /> <span>Confirm the intended roads and trails are legal, open, and suitable.</span></label>
+            <label><input type="checkbox" /> <span>Re-export after adding shaping points, then compare again.</span></label>
+            <label><input type="checkbox" /> <span>Share the final file and any cautions with the group.</span></label>
+          </div>
+          <p class="safety-note"><strong>Geometry, not safety.</strong> A close match means the lines are geographically similar. It does not confirm access, surface, traffic, closures, or legal use.</p>
+        </div>
+      </section>
+
+      <section class="how-it-works" aria-labelledby="how-heading">
+        <p class="step">Method</p><h2 id="how-heading">A neutral check between route engines</h2>
+        <div class="method-grid">
+          <div><span>1</span><h3>Read locally</h3><p>GPX tracks or routes are parsed in your browser and never leave your device.</p></div>
+          <div><span>2</span><h3>Normalize density</h3><p>Both lines are sampled by distance, so extra track points do not distort the result.</p></div>
+          <div><span>3</span><h3>Check both ways</h3><p>Each route is measured against the other to catch detours, shortcuts, and extra loops.</p></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p><strong>Route Fidelity Check</strong> · A free, local-first utility from <a href="https://sociobot.in">Sociobot</a>.</p>
+      <nav aria-label="Legal"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="https://github.com/B-Divyesh/sf-route-fidelity-check">Source</a></nav>
+      <p class="asset-note">Landscape artwork generated for this product with Azure AI Foundry.</p>
+    </footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
