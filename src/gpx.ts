@@ -30,10 +30,47 @@ function attribute(tag: string, name: string): string | undefined {
   return match?.[1];
 }
 
+function malformedXmlError(): Error {
+  return new Error('This GPX XML is incomplete or malformed. Re-export the complete GPX file and try again.');
+}
+
+/**
+ * Browsers provide the XML parser used for the actual upload path. The compact
+ * fallback keeps the parser testable in Node without accepting unclosed tags.
+ */
+function assertWellFormedXml(text: string): void {
+  if (typeof DOMParser !== 'undefined') {
+    const document = new DOMParser().parseFromString(text, 'application/xml');
+    if (document.getElementsByTagName('parsererror').length) throw malformedXmlError();
+    return;
+  }
+
+  const stack: string[] = [];
+  const tokenMatches = [...text.matchAll(/<!--[\s\S]*?-->|<!\[CDATA\[[\s\S]*?\]\]>|<\?[^]*?\?>|<[^>]+>/g)];
+  if (!tokenMatches.length) throw malformedXmlError();
+  let cursor = 0;
+  for (const match of tokenMatches) {
+    if (text.slice(cursor, match.index).includes('<')) throw malformedXmlError();
+    const token = match[0];
+    cursor = (match.index ?? 0) + token.length;
+    if (token.startsWith('<!--') || token.startsWith('<![') || token.startsWith('<?')) continue;
+    if (/^<\//.test(token)) {
+      const name = token.slice(2, -1).trim();
+      if (!name || stack.pop() !== name) throw malformedXmlError();
+    } else if (!/^<!/.test(token) && !/\/>$/.test(token)) {
+      const name = token.slice(1, -1).trim().split(/\s+/, 1)[0];
+      if (!name || /["']/.test(name)) throw malformedXmlError();
+      stack.push(name);
+    }
+  }
+  if (text.slice(cursor).includes('<') || stack.length) throw malformedXmlError();
+}
+
 export function parseGpxText(text: string, fileName = 'route.gpx'): RouteData {
   if (!text.trim()) throw new Error('This file is empty. Choose a GPX file with a track or route.');
   if (/<!DOCTYPE|<!ENTITY/i.test(text)) throw new Error('This GPX contains unsupported document declarations. Export a plain GPX file and try again.');
   if (!/<gpx\b/i.test(text)) throw new Error('This does not look like a GPX file. Choose a .gpx export.');
+  assertWellFormedXml(text);
 
   const trackTags = text.match(/<trkpt\b[^>]*>/gi) ?? [];
   const routeTags = text.match(/<rtept\b[^>]*>/gi) ?? [];

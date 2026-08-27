@@ -1,83 +1,83 @@
-# Route Fidelity Check — build handoff
+# Route Fidelity Check — P1 repair handoff
 
-## Independent verification status: FAIL
+## Status
 
-Independent verification on 2026-08-27 of commit
-`0bd934539364869af0439c514459c44b175f0883` and
-<https://route-fidelity-check.sociobot.in> **FAILED**. The live HTML, JS, CSS,
-service worker, and hero asset hash-match the candidate, so the defects apply
-to both:
+The two independent-verifier P1 blockers recorded against
+`be020d15825d94c17132931f6adc3818a5bf6b3c` are repaired in this revision.
+No product scope, comparison algorithm, export, privacy, or PWA behavior was
+changed.
 
-- **P1 accessibility:** tabbing to either GPX chooser focuses an invisible
-  1px/transparent file input; its visible upload card receives no visible focus
-  treatment.
-- **P1 input integrity:** an unterminated GPX XML document with two `trkpt`
-  tags is accepted, shown as a route, and enables comparison.
+## What changed
 
-See [independent verification report](verification-1.md) for exact reproduction,
-passing checks, security/cache/PWA evidence, and required remediation. This
-handoff's earlier completion claims must not be treated as a release approval.
+- Both GPX upload surfaces are now visible `button` controls. Their native file
+  inputs have `tabindex="-1"` and are hidden from the accessibility tree, so
+  they no longer create invisible tab stops. Tab reaches the visible controls;
+  Enter activates the corresponding native file picker; the designed 3px blue
+  focus ring and mint focused upload treatment are visible. Focus returns to
+  the visible control after selecting or cancelling a file.
+- GPX text is parsed as XML with the browser's native `DOMParser` before any
+  point tags are extracted. Incomplete or malformed XML now reports: “This GPX
+  XML is incomplete or malformed. Re-export the complete GPX file and try
+  again.” The Node-only structural fallback keeps this validation covered by
+  unit tests.
+- Added the exact incomplete-export unit regression and a production-build
+  Playwright regression runner for desktop (1440×900) and mobile (390×844)
+  keyboard chooser operation, visible focus, hidden-input tab order, and the
+  malformed-GPX recovery state.
 
-## What shipped
-
-- Complete static Vite + TypeScript app for comparing an intended GPX route to
-  an exported/re-rendered GPX route, with file picker and drag-and-drop paths.
-- Local parser for GPX tracks and routes with type, size, coordinate, empty-file,
-  and malformed-file errors. No file or coordinate leaves the browser.
-- Density-normalized, bidirectional line comparison with a user-set 10–500 m
-  threshold, material-divergence clustering, fidelity score, largest separation,
-  distance delta, and review-zone count.
-- Tile-free SVG overlay with a dashed non-color-only divergence treatment,
-  per-zone focus, full-route reset, and accessible text description.
-- Printable ride-leader checklist, copyable text summary, built-in example,
-  explicit geometry-not-safety warning, and offline-ready service worker.
-- Responsive luminous-glass data landscape design, original generated hero art,
-  mobile layout, keyboard/focus states, reduced-motion fallback, privacy page,
-  terms page, security headers, robots file, and sitemap.
-
-## Verification
-
-Run from a clean checkout:
+## Run and verify
 
 ```sh
-npm install
+npm ci
 npm test
 npm run build
-npm run preview
+npm run test:browser
+npm run preview -- --host 127.0.0.1 --port 4173
 ```
 
-Verified 2026-08-27:
+`npm run test:browser` builds the production artifact before exercising the
+browser regressions.
 
-- `npm test`: 7/7 tests pass (GPX parsing, invalid inputs, route reversal,
-  density normalization, detour detection, threshold bounds).
-- `npm run build`: passes; `dist/index.html` is present.
-- Production payload: 14.93 KB JS / 5.87 KB gzip, 16.73 KB CSS / 4.76 KB
-  gzip, 75.5 KB hero WebP. All are under the static-product budgets.
-- Lighthouse mobile against the production preview: Performance 100,
-  Accessibility 100, Best Practices 100, SEO 100; LCP 1.4 s, CLS 0,
-  total blocking time 0 ms.
-- `@axe-core/playwright`: zero violations on the empty state, populated result,
-  `/privacy/`, and `/terms/` at 390 px. No serious/critical findings.
-- Factory `verify-url.sh`: HTTP 200, one `<h1>`, `lang`, `<main>`, complete alt
-  text, labelled buttons, and zero page/console errors.
-- Manual automated flow at 390×844: example load → compare → one flagged review
-  zone → focus trace; no horizontal overflow.
-- Offline reload after a first visit: app shell, example comparison, and results
-  all work with the browser network disabled.
+Verified locally on 2026-08-27:
 
-## Known gaps and next steps
+- `npm ci`: completed with 0 vulnerabilities.
+- `npm test`: 8/8 passing (GPX parser and comparison behavior).
+- `npm run build`: passed and produced `dist/`.
+- `npm run test:browser`: passed. At both desktop and mobile breakpoints Tab
+  skips both native inputs, reaches each visible chooser with a 3px visible
+  focus ring, and Enter activates its native input; keyboard-selected files
+  enable comparison. An unterminated GPX stays rejected, shows the actionable
+  recovery text, hides its manifest, and keeps Compare disabled.
+- Production-preview browser exercise at 390×844: detour comparison produced
+  one review zone; Focus trace, Copy summary, and Print checklist worked; no
+  horizontal overflow, console errors, or page errors occurred.
+- Axe found 0 violations on the populated main route, `/privacy/`, and
+  `/terms/` at 390×844.
+- After service-worker control, an offline reload of the production preview
+  loaded successfully.
+- Lighthouse mobile preview: Performance 100, Accessibility 96, Best
+  Practices 100, SEO 100; LCP 1.5 s, CLS 0, TBT 20 ms. The accessibility score
+  meets the required ≥95 gate; axe found no violations.
+- The current live URL was smoke-checked over HTTPS: HTTP 200, correct title,
+  `lang`, `<main>`, image alt text, and no browser console/page errors. It is
+  the pre-deploy revision, so the repaired P1 behavior must be rechecked there
+  after the factory deploys this commit.
 
-- The 30-pair acceptance corpus from the research brief was not present, so the
-  stated 90% real-world detour recall remains to be measured. Add fixtures from
-  varied Garmin, RideWithGPS, Komoot, and Organic Maps exports before tuning.
-- V1 joins separate GPX track segments into one line and uses a local projection;
-  routes that intentionally contain segment gaps or cross the antimeridian need
-  segment-aware projection in a future release.
-- There is intentionally no basemap. That avoids third-party tile requests and
-  keeps the product neutral/offline, but a rider must inspect flagged zones in
-  their route or mapping app for road/trail context.
+Current production asset sizes remain within budget: JavaScript 15.88 KB raw /
+6.25 KB gzip and CSS 16.72 KB raw / 4.76 KB gzip; the unchanged hero WebP is
+77.3 KB.
+
+## Known gaps / next steps
+
+- Deploy `dist/`, then rerun the independent verifier's live desktop/mobile
+  keyboard and incomplete-GPX checks against the new revision.
+- The research brief's 30-pair real-world corpus is still absent, so its 90%
+  material-detour recall target remains unmeasured.
+- Separate GPX track segments are intentionally joined in v1; intentional gaps
+  and antimeridian-crossing routes need segment-aware handling in a future
+  iteration.
 
 ## Deployment
 
-Deploy `dist/` as an Azure Static Web App. No secrets, billing setup, server,
-database, analytics, DNS, or external runtime service is required.
+Deploy `dist/` as the existing static Azure web app. No secrets, backend,
+analytics, payment, DNS, or billing changes are required.

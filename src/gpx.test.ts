@@ -19,4 +19,10 @@ describe('parseGpxText', () => {
     expect(() => parseGpxText('<!DOCTYPE gpx><gpx/>')).toThrow(/unsupported/i);
     expect(() => parseGpxText('<gpx><trkpt lat="999" lon="2"/><trkpt lat="1" lon="2"/></gpx>')).toThrow(/invalid coordinates/i);
   });
+
+  it('rejects incomplete GPX XML instead of extracting a partial route', () => {
+    const incomplete = '<gpx><trkpt lat="51.5" lon="-0.12"/><trkpt lat="51.5" lon="-0.10"/>';
+    expect(() => parseGpxText(incomplete, 'device-export.gpx'))
+      .toThrow(/incomplete or malformed\. Re-export the complete GPX/i);
+  });
 });

@@ -63,7 +63,13 @@ async function acceptFile(kind: RouteKind, file?: File): Promise<void> {
 
 for (const kind of ['intended', 'exported'] as RouteKind[]) {
   const input = byId<HTMLInputElement>(`${kind}-file`);
-  input.addEventListener('change', () => void acceptFile(kind, input.files?.[0]));
+  const chooser = byId<HTMLButtonElement>(`${kind}-chooser`);
+  input.addEventListener('change', () => {
+    void acceptFile(kind, input.files?.[0]);
+    chooser.focus();
+  });
+  input.addEventListener('cancel', () => chooser.focus());
+  chooser.addEventListener('click', () => input.click());
   const panel = document.querySelector<HTMLElement>(`.upload-panel[data-kind="${kind}"]`);
   const zone = panel?.querySelector<HTMLElement>('.drop-zone');
   if (!zone) continue;
