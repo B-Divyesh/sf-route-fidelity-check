@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
+import AxeBuilder from '@axe-core/playwright';
 import { chromium } from 'playwright';
 import { preview } from 'vite';
 
@@ -76,6 +77,31 @@ async function malformedGpxRegression(browser) {
   }
 }
 
+async function uploadCaptionAccessibilityRegression(browser, label, viewport, isMobile) {
+  const context = await browser.newContext({ viewport, isMobile, hasTouch: isMobile });
+  const page = await context.newPage();
+  try {
+    await page.goto(baseUrl, { waitUntil: 'networkidle' });
+    const captions = page.locator('#intended-chooser em, #exported-chooser em');
+    assert.equal(await captions.count(), 2, `${label}: both upload helper captions must render`);
+    const colors = await captions.evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).color));
+    assert.deepEqual(colors, ['rgb(225, 243, 234)', 'rgb(225, 243, 234)'], `${label}: upload helper captions must use the high-contrast computed color`);
+
+    for (const state of ['rest', 'hover', 'focus', 'dragging']) {
+      if (state === 'hover') await page.locator('#intended-chooser').hover();
+      if (state === 'focus') await page.locator('#intended-chooser').focus();
+      if (state === 'dragging') await page.locator('#intended-chooser').evaluate((node) => node.classList.add('is-dragging'));
+      const results = await new AxeBuilder({ page }).analyze();
+      const seriousOrCritical = results.violations.filter((violation) => violation.impact === 'serious' || violation.impact === 'critical');
+      assert.deepEqual(seriousOrCritical, [], `${label} ${state}: axe serious/critical violations: ${seriousOrCritical.map((violation) => violation.id).join(', ')}`);
+      assert.equal(results.violations.some((violation) => violation.id === 'color-contrast'), false, `${label} ${state}: upload helper captions must meet axe color contrast`);
+      await page.goto(baseUrl, { waitUntil: 'networkidle' });
+    }
+  } finally {
+    await context.close();
+  }
+}
+
 const server = await preview({ root, logLevel: 'error', preview: { host: '127.0.0.1', port: 0 } });
 const address = server.httpServer?.address();
 if (!address || typeof address === 'string') throw new Error('Could not determine preview server address.');
@@ -83,10 +109,12 @@ const baseUrl = `http://127.0.0.1:${address.port}`;
 const browser = await chromium.launch({ headless: true });
 
 try {
+  await uploadCaptionAccessibilityRegression(browser, 'desktop', { width: 1440, height: 900 }, false);
+  await uploadCaptionAccessibilityRegression(browser, 'mobile', { width: 390, height: 844 }, true);
   await keyboardChooserRegression(browser, 'desktop', { width: 1440, height: 900 }, false);
   await keyboardChooserRegression(browser, 'mobile', { width: 390, height: 844 }, true);
   await malformedGpxRegression(browser);
-  console.log('Browser regressions passed: desktop/mobile keyboard GPX choosers and malformed GPX recovery.');
+  console.log('Browser regressions passed: desktop/mobile axe contrast, keyboard GPX choosers, and malformed GPX recovery.');
 } finally {
   await browser.close();
   await server.close();

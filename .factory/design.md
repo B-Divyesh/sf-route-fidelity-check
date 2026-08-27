@@ -16,6 +16,9 @@ the comparison model before a rider uploads anything.
 - `mist-50` `#F3FBF7`: primary text.
 - `mist-200` `#C7DDD4`: secondary text (7.8:1 on night-950).
 - `mist-400` `#8DAEA2`: quiet labels (6.3:1 on night-950).
+- `upload-helper` `#E1F3EA`: the small helper captions inside the two layered
+  upload controls; deliberately brighter than quiet labels so their rendered
+  surface remains WCAG AA legible in rest, hover, focus, and drag states.
 - `route-mint` `#73F5BE`: intended route and primary action; dark text on filled buttons.
 - `route-blue` `#67BFFF`: exported route.
 - `detour-coral` `#FF8A72`: divergence and warnings, always paired with a label or pattern.

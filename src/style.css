@@ -7,6 +7,7 @@
   --text: #f3fbf7;
   --muted: #c7ddd4;
   --quiet: #8daea2;
+  --upload-helper: #e1f3ea;
   --mint: #73f5be;
   --blue: #67bfff;
   --coral: #ff8a72;
@@ -124,7 +125,7 @@ h3 { margin-bottom: 8px; font: 750 1.35rem/1.2 var(--display); letter-spacing: -
 .drop-zone svg { width: 32px; flex: 0 0 auto; fill: none; stroke: var(--mint); stroke-width: 1.5; }
 .drop-zone b, .drop-zone em { display: block; }
 .drop-zone b { color: var(--text); }
-.drop-zone em { margin-top: 4px; color: var(--quiet); font-style: normal; font-size: 13px; }
+.drop-zone em { margin-top: 4px; color: var(--upload-helper); font-style: normal; font-size: 13px; }
 .has-file .drop-zone { min-height: 54px; padding: 12px; justify-content: flex-start; }
 .has-file .drop-zone b { font-size: 0; }
 .has-file .drop-zone b::after { content: "Replace GPX"; font-size: 14px; }
