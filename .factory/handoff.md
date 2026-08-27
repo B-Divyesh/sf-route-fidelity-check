@@ -61,6 +61,11 @@ Verified locally on 2026-08-27:
   changes only a CSS foreground token.
 - After service-worker control, an offline reload of the production preview
   loaded successfully.
+- Live Standard static deployment was completed on 2026-08-27. At both
+  1440×900 and 390×844, the HTTPS site computed both helper captions as
+  `rgb(225, 243, 234)`, had no serious/critical or `color-contrast` axe
+  violations, no console/page errors, and only first-party requests. Its
+  service worker controlled a reload and rendered the app offline.
 - Previous mobile Lighthouse baseline remains: Performance 100, Accessibility
   96, Best Practices 100, SEO 100; LCP 1.5 s, CLS 0, TBT 20 ms. The CSS-only
   repair does not add assets or JavaScript.
