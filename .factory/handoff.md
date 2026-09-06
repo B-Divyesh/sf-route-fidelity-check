@@ -1,47 +1,48 @@
-# Route Fidelity Check — verification handoff
+# Compare planned and exported GPX routes — review handoff
 
-## Status: PASS
+## Status: FAIL
 
-Independent QA passed candidate `d088e5559690c8bd6de4878cf04f9ac72ddc3832`
-on 2026-08-27 against both a fresh production build and
-<https://route-fidelity-check.sociobot.in>. The live HTML, JS, CSS, and service
-worker were byte-identical to that candidate.
+Review 1 audited the live static product without changing product code.
+Implementation `3c240d13424d95c26cd5acf9f41796f10af9de4e` is deployed byte-for-byte.
+Documentation base `3aae0e3b9f83a74c380c2da29d52f22ff43357cc` was reviewed.
 
-## Verified
+The review found 9 defects and 15 untested public claims. The full report is
+`.factory/review-1.md`.
 
-- `npm ci` completed with zero audit vulnerabilities; `npm test` passed 8/8;
-  `npm run build` passed and produced `dist/`; the checked-in production browser
-  suite passed after installing Playwright Chromium in the fresh runner.
-- Full local and live browser journeys at 1440px and 390px passed: clear and
-  material-detour GPX comparisons, 10/500 m boundaries, invalid threshold
-  feedback, empty/malformed/invalid/oversize GPX recovery, keyboard-visible
-  upload controls, reduced motion, print/copy/focus review controls, and zero
-  real-flow console/page errors.
-- Axe reported no serious/critical finding at initial or populated states.
-  File processing remained local-only; requests were same-origin only.
-- HTTPS headers provide CSP, HSTS, referrer, MIME, permissions, and framing
-  protections; hashed static assets cache immutably. The PWA controlled an
-  offline reload and its versioned worker prunes stale caches.
-- Mobile Lighthouse: Performance 100, Accessibility 100, Best Practices 100,
-  SEO 100; FCP 1.1 s, LCP 1.2 s, TBT 0 ms, CLS 0.
+## What passed
 
-## How to run
+- `npm ci`, `npm test` (8/8), and `npm run build` passed.
+- After `npx playwright install chromium`, `npm run test:browser` passed.
+- Sample, identical, invalid, boundary, recovery, print, copy, trace focus,
+  keyboard, phone, reduced-motion, and offline paths worked.
+- Axe found no serious or critical violations.
+- Product requests stayed first-party and browser user-data stores stayed empty.
+- Live Lighthouse scores were 100 in all four categories; LCP was 1.2 s.
+- Earlier chooser focus, malformed XML, and upload contrast defects are fixed.
+
+## What remains
+
+1. Add the required one-click demo route, persistent demo label, reset, start-real
+   action, and `.factory/demo.md`.
+2. Add `.factory/claims.json` and one tagged observable test for each retained
+   public claim.
+3. Prove the brief's 90% result with the 30-pair corpus.
+4. Repair the first-screen words and action placement.
+5. Add a real 404 page and consistent route header/footer structure.
+6. Complete the PWA manifest, icons, and update notice.
+7. Add canonical, social, and route metadata.
+8. Enlarge small link targets and add skip links to legal pages.
+9. Give privacy requests a direct contact method.
+
+## Repeat the checks
 
 ```sh
 npm ci
 npm test
 npm run build
-npx playwright install chromium  # if absent in the runner
+npx playwright install chromium
 npm run test:browser
-npm run preview -- --host 127.0.0.1 --port 4173
 ```
 
-## Known gap / next step
-
-No release-blocking defects were found. The brief's 30-pair real-world corpus
-is absent, so its 90% material-detour recall success measure remains
-unmeasured; add a versioned anonymised corpus and automated recall check before
-making that performance claim. Intentional segment gaps and antimeridian
-routes also remain future algorithm work.
-
-Full evidence: `.factory/verification-3.md`.
+Live browser and Lighthouse evidence is under
+`/work/.evidence/route-fidelity-check-review-1/`.
