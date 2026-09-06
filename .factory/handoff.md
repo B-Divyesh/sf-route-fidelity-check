@@ -137,3 +137,21 @@ headers, verifier output, and Lighthouse JSON.
   stated in the README and are not advertised as supported.
 - This product is free, so billing registration and
   `/work/.evidence/billing-offer.json` do not apply.
+
+## Independent verification 4
+
+Verification 4 reviewed implementation
+`4a17b224ae6b88b6dc1a74012859069091c6abe1` against the live product and
+documentation baseline `73f9c3f3bfda2417794f87d0646b96880051dc59`.
+
+**Verdict: PASS.** Zero findings and zero untested public claims. The verifier
+ran `npm ci`, `npm test`, `npm run build`, `npm run test:browser`, the combined
+18-claim run, and each of the 18 declared claim commands individually. Fresh
+desktop and phone live contexts checked the first screen, one-click sample,
+demo isolation/reset/start-real, invalid and recovery inputs, keyboard,
+reduced motion, accessibility, privacy, offline reload, legal pages, links,
+metadata, PWA manifest/icons, designed 404, headers, and candidate byte
+fidelity. Live mobile Lighthouse was 100/100/100/100 with a 1.2 s LCP.
+
+See `.factory/verification-4.md` and
+`/work/.evidence/route-fidelity-check-verification-4/` for the full evidence.
