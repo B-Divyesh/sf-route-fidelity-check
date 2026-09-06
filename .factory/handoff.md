@@ -8,9 +8,9 @@ That implementation is deployed at
 <https://route-fidelity-check.sociobot.in>. The live HTML, JavaScript, CSS, and
 service worker match the local production build byte for byte.
 
-Verification documentation SHA: pending the report-only commit after this
-deployment record. That later documentation commit does not change the deployed
-product artifact.
+Verification documentation SHA: `7dc0a019e386499bae0789d30c66c40bfa22ee74`.
+The following annotation commit only records that SHA and does not change the
+deployed product artifact.
 
 ## What changed
 
