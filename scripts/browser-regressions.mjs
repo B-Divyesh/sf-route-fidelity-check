@@ -46,7 +46,7 @@ async function keyboardChooserRegression(browser, label, viewport, isMobile) {
     assert.equal(await page.locator('#intended-file').getAttribute('tabindex'), '-1');
     assert.equal(await page.locator('#exported-file').getAttribute('tabindex'), '-1');
 
-    await page.locator('#load-example').focus();
+    await page.locator('.real-start-link').focus();
     await page.keyboard.press('Tab');
     await assertVisibleFocus(page, 'intended-chooser');
     await chooseWithKeyboard(page, 'intended-chooser', fixture('intended.gpx', validGpx));
@@ -84,8 +84,6 @@ async function uploadCaptionAccessibilityRegression(browser, label, viewport, is
     await page.goto(baseUrl, { waitUntil: 'networkidle' });
     const captions = page.locator('#intended-chooser em, #exported-chooser em');
     assert.equal(await captions.count(), 2, `${label}: both upload helper captions must render`);
-    const colors = await captions.evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).color));
-    assert.deepEqual(colors, ['rgb(225, 243, 234)', 'rgb(225, 243, 234)'], `${label}: upload helper captions must use the high-contrast computed color`);
 
     for (const state of ['rest', 'hover', 'focus', 'dragging']) {
       if (state === 'hover') await page.locator('#intended-chooser').hover();
@@ -97,6 +95,64 @@ async function uploadCaptionAccessibilityRegression(browser, label, viewport, is
       assert.equal(results.violations.some((violation) => violation.id === 'color-contrast'), false, `${label} ${state}: upload helper captions must meet axe color contrast`);
       await page.goto(baseUrl, { waitUntil: 'networkidle' });
     }
+  } finally {
+    await context.close();
+  }
+}
+
+async function fullProductRegression(browser, label, viewport, isMobile) {
+  const context = await browser.newContext({ viewport, isMobile, hasTouch: isMobile, reducedMotion: 'reduce' });
+  const page = await context.newPage();
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(String(error)));
+  page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
+  try {
+    await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
+    assert.equal(await page.locator('h1').innerText(), 'Compare planned and exported GPX routes');
+    assert.equal(await page.getByText(/For cyclists and club ride leaders/).isVisible(), true);
+    const action = await page.locator('#load-example').boundingBox();
+    assert(action && action.y + action.height <= viewport.height, `${label}: sample action must be visible before scrolling`);
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), true, `${label}: page must not overflow horizontally`);
+
+    await page.locator('#load-example').click();
+    await page.locator('#results').waitFor({ state: 'visible' });
+    assert.match(page.url(), /\/demo$/);
+    assert.equal(await page.locator('#metric-zones').innerText(), '1');
+    assert.match(await page.locator('#demo-banner').innerText(), /Demo — sample data, nothing is saved/);
+    const demoAxe = await new AxeBuilder({ page }).analyze();
+    assert.deepEqual(demoAxe.violations.filter((item) => ['serious', 'critical'].includes(item.impact ?? '')), [], `${label}: populated demo must have no serious or critical axe findings`);
+
+    await page.evaluate(() => window.dispatchEvent(new Event('route-update-available')));
+    assert.equal(await page.locator('#update-notice').isVisible(), true, `${label}: an available update must be announced`);
+    assert.equal(await page.locator('#results').isVisible(), true, `${label}: update notice must not interrupt the comparison`);
+    const motion = await page.locator('.results').evaluate((node) => getComputedStyle(node).animationDuration);
+    assert.match(motion, /0\.00001s|1e-05s|0s/);
+    assert.deepEqual(errors, [], `${label}: product flow must have no console or page errors`);
+  } finally {
+    await context.close();
+  }
+}
+
+async function pageStructureRegression(browser) {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const page = await context.newPage();
+  try {
+    for (const path of ['/privacy/', '/terms/', '/404.html']) {
+      await page.goto(`${baseUrl}${path}`, { waitUntil: 'networkidle' });
+      assert.equal(await page.locator('h1').count(), 1, `${path}: exactly one h1`);
+      assert.equal(await page.locator('.skip-link').count(), 1, `${path}: skip link`);
+      assert.equal(await page.locator('.site-header nav').count(), 1, `${path}: shared header navigation`);
+      assert.equal(await page.locator('.site-footer').count(), 1, `${path}: shared footer`);
+      const links = page.locator('.site-header a, .site-footer a');
+      for (let index = 0; index < await links.count(); index += 1) {
+        const box = await links.nth(index).boundingBox();
+        assert(box && box.height >= 44 && box.width >= 44, `${path}: header/footer link ${index + 1} must be at least 44px`);
+      }
+      const axe = await new AxeBuilder({ page }).analyze();
+      assert.deepEqual(axe.violations.filter((item) => ['serious', 'critical'].includes(item.impact ?? '')), [], `${path}: no serious or critical axe findings`);
+    }
+    await page.goto(`${baseUrl}/privacy/`);
+    assert.equal(await page.locator('a[href^="mailto:"]').isVisible(), true, 'privacy page must provide a direct request method');
   } finally {
     await context.close();
   }
@@ -114,7 +170,10 @@ try {
   await keyboardChooserRegression(browser, 'desktop', { width: 1440, height: 900 }, false);
   await keyboardChooserRegression(browser, 'mobile', { width: 390, height: 844 }, true);
   await malformedGpxRegression(browser);
-  console.log('Browser regressions passed: desktop/mobile axe contrast, keyboard GPX choosers, and malformed GPX recovery.');
+  await fullProductRegression(browser, 'desktop', { width: 1440, height: 900 }, false);
+  await fullProductRegression(browser, 'mobile', { width: 390, height: 844 }, true);
+  await pageStructureRegression(browser);
+  console.log('Browser regressions passed: demo, first screen, routes, touch targets, axe, update notice, keyboard choosers, and malformed GPX recovery.');
 } finally {
   await browser.close();
   await server.close();

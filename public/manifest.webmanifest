@@ -1,0 +1,31 @@
+{
+  "name": "Route Fidelity Check",
+  "short_name": "Route Check",
+  "description": "Compare planned and exported GPX routes before a ride.",
+  "id": "/",
+  "start_url": "/?source=pwa&version=1.1.0",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#061413",
+  "theme_color": "#061413",
+  "icons": [
+    {
+      "src": "/icons/sf-route-fidelity-check-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/sf-route-fidelity-check-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/sf-route-fidelity-check-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

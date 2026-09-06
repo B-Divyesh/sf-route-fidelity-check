@@ -1,67 +1,111 @@
-# Route Fidelity Check
+# Compare planned and exported GPX routes
 
-A private, browser-only GPX preflight for cyclists and club ride leaders. It
-compares an intended route with an app or device export, flags geometric
-separations over a chosen threshold, and produces a printable review checklist.
+Route Fidelity Check is for cyclists and club ride leaders checking a route
+handoff before a group follows it.
 
-Live: <https://route-fidelity-check.sociobot.in>
+Try the complete sample at
+<https://route-fidelity-check.sociobot.in/demo>. It needs no account or setup.
 
 ## What it does
 
-- Accepts GPX tracks (`trkpt`) and routes (`rtept`) by picker or drag-and-drop.
-- Samples both route lines by distance and checks each against the other, so
-  different recording densities and reversed direction do not create false
-  differences.
-- Groups material separations into review zones and reports fidelity, maximum
-  separation, and route-length change.
-- Renders both routes in one tile-free SVG coordinate space, highlights flagged
-  portions, and focuses individual review zones.
-- Prints a ride-leader checklist and copies a plain-text comparison summary.
-- Works after first load without a network connection.
+- Loads GPX tracks and routes through a file chooser or drag and drop.
+- Accepts files up to and including 15 MB.
+- Compares planned and exported lines at a 10 to 500 metre threshold.
+- Samples distance in both directions to handle point density and route direction.
+- Flags detours, shortcuts, and added loops as review zones.
+- Reports fidelity, largest separation, distance change, and review-zone count.
+- Shows a tile-free route trace with controls to focus each review zone.
+- Copies a text summary and prints a four-step rider checklist.
+- Works offline after the first visit and includes a standalone app manifest.
 
-GPX files and comparison results stay in browser memory. There are no accounts,
-analytics, map-tile requests, or third-party runtime scripts. This is a geometric
-comparison—not a statement about safety, access, legality, surface, or closures.
+The route comparison is free to use. It plans no routes and gives no navigation
+advice. A close match does not confirm safety, access, surface, traffic,
+closures, or legal use.
+
+## Privacy
+
+GPX files and results stay in browser memory. Refreshing or closing the real
+comparison clears them. The app sends no GPX content and sets no cookies.
+
+There are no accounts, analytics, ads, tracking pixels, third-party scripts, or
+map tiles. The offline app shell is the only product cache.
+
+See the [privacy page](https://route-fidelity-check.sociobot.in/privacy/) for
+hosting details and a direct privacy contact.
+
+## Demo sandbox
+
+“Try it with sample data” opens a completed river-route comparison in one
+click. The persistent demo banner can reset the sample or start an empty real
+comparison. Demo state uses a separate in-memory session and never changes real
+route data.
+
+See [.factory/demo.md](.factory/demo.md) for the sample and reset contract.
+
+## Acceptance corpus
+
+The versioned corpus contains 30 planned/exported pairs. Twenty-seven contain a
+known detour, shortcut, or added loop. Three are clear controls.
+
+The declared check requires at least 90% recall, no false flags on the clear
+controls, and each reviewable result within 15 seconds. The corpus is
+purpose-built and anonymous, so it does not replace later field testing across
+specific device exports.
+
+See [test-data/corpus/README.md](test-data/corpus/README.md) for provenance.
 
 ## Run locally
 
-Requires Node.js 20 or newer.
+Use Node.js 20 or newer.
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 
-Open the URL Vite prints, then choose two `.gpx` files or use “Try an example.”
+Open the local URL, then choose two `.gpx` files or open `/demo`.
 
 ## Test and build
 
 ```sh
+npm ci
 npm test
+npm run test:browser
+npm run test:claims
 npm run build
-npm run preview
 ```
 
-The exact deployment command is `npm run build`. It writes the static site to
-`dist/`, with `dist/index.html` at the root. Deploy that directory to Azure
-Static Web Apps. `public/staticwebapp.config.json` supplies security and cache
-headers; no infrastructure changes are required from this repository.
+Every public product claim has one tagged outcome test in
+[.factory/claims.json](.factory/claims.json). Each listed command builds and
+runs independently after `npm ci`.
+
+The browser package is pinned to Playwright 1.58.2. If Chromium is missing,
+run `npx playwright install chromium` once.
 
 ## Method and limits
 
-Both lines are projected into a shared local metre-based coordinate space and
-resampled at 4–20 metre intervals based on the selected threshold. A spatial
-grid finds the closest points in both directions. Flagged samples are clustered
-along the intended route into human-reviewable zones.
+Both lines use one local metre-based coordinate space. Sampling runs at 4 to 20
+metre intervals based on the chosen threshold. A spatial grid finds the closest
+samples in both directions. Nearby flagged samples become review zones.
 
-Very long routes crossing the antimeridian and GPX files whose separate track
-segments intentionally contain large gaps are outside the v1 geometry model.
-The researched acceptance target still needs validation against the planned
-30-pair real-world corpus.
+Very long routes crossing the antimeridian are outside this geometry model.
+Separate track segments with intentional gaps are joined into one line.
 
-## Product documentation
+## Deploy
+
+Run `npm run build` and deploy `dist/` to the existing Azure Static Web App.
+The repository needs no server, database, paid service, runtime secret, or
+billing registration.
+
+`public/staticwebapp.config.json` defines the demo rewrite, designed 404,
+security headers, and cache policy. Deployment infrastructure stays outside
+this repository.
+
+## Product documents
 
 - [Research brief](.factory/brief.json)
 - [Visual system and asset provenance](.factory/design.md)
-- [Build handoff](.factory/handoff.md)
+- [Demo sandbox](.factory/demo.md)
+- [Claim registry](.factory/claims.json)
+- [Repair handoff](.factory/handoff.md)
 - [MIT license](LICENSE)

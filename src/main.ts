@@ -8,6 +8,8 @@ type RouteKind = 'intended' | 'exported';
 
 const routes: Partial<Record<RouteKind, RouteData>> = {};
 let lastResult: ComparisonResult | undefined;
+const normalizedPath = window.location.pathname.replace(/\/+$/, '') || '/';
+const isDemo = normalizedPath === '/demo' || new URLSearchParams(window.location.search).get('demo') === '1';
 
 function byId<T extends HTMLElement>(id: string): T {
   const node = document.getElementById(id);
@@ -18,6 +20,17 @@ function byId<T extends HTMLElement>(id: string): T {
 const compareButton = byId<HTMLButtonElement>('compare-button');
 const results = byId<HTMLElement>('results');
 const thresholdInput = byId<HTMLInputElement>('threshold');
+
+function configureRoute(): void {
+  if (!isDemo) return;
+  document.title = 'Demo — Route Fidelity Check';
+  document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.setAttribute('href', 'https://route-fidelity-check.sociobot.in/demo');
+  document.querySelector<HTMLMetaElement>('meta[property="og:title"]')?.setAttribute('content', 'Demo — Route Fidelity Check');
+  document.querySelector<HTMLMetaElement>('meta[property="og:url"]')?.setAttribute('content', 'https://route-fidelity-check.sociobot.in/demo');
+  byId('demo-banner').hidden = false;
+}
+
+configureRoute();
 
 function escapeHtml(value: string): string {
   return value.replace(/[&<>"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[character] ?? character);
@@ -82,15 +95,6 @@ for (const kind of ['intended', 'exported'] as RouteKind[]) {
   zone.addEventListener('drop', (event) => void acceptFile(kind, event.dataTransfer?.files[0]));
 }
 
-byId('load-example').addEventListener('click', () => {
-  routes.intended = parseGpxText(intendedDemo, 'intended-example.gpx');
-  routes.exported = parseGpxText(exportedDemo, 'exported-example.gpx');
-  updateManifest('intended');
-  updateManifest('exported');
-  byId('compare-heading').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  byId('analysis-status').textContent = 'Example routes loaded. Choose Compare routes to inspect the detour.';
-});
-
 function pathFor(points: XYPoint[]): string {
   return points.map((point, index) => `${index ? 'L' : 'M'}${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(' ');
 }
@@ -137,7 +141,7 @@ function renderMap(result: ComparisonResult): void {
   ].map((points) => `<path class="route-line divergence" d="${pathFor(points)}"/>`).join('');
   map.innerHTML = `<svg viewBox="${boundsValue(bounds)}" data-full-view="${boundsValue(bounds)}" preserveAspectRatio="xMidYMid meet" tabindex="0">
     <title id="map-title">Compared route lines</title>
-    <desc id="map-description">The intended route is mint, the exported route is blue, and portions beyond the ${result.thresholdM} metre threshold have a dashed coral overlay. ${result.divergences.length} review zones were found.</desc>
+    <desc id="map-description">The planned route is mint, the exported route is blue, and portions beyond the ${result.thresholdM} metre threshold have a dashed coral overlay. ${result.divergences.length} review ${result.divergences.length === 1 ? 'zone was' : 'zones were'} found.</desc>
     <defs><filter id="route-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
     <g class="route-layer"><path class="route-line intended" d="${pathFor(result.intendedSamples)}"/><path class="route-line exported" d="${pathFor(result.exportedSamples)}"/>${highlighted}</g>
   </svg>`;
@@ -180,7 +184,7 @@ function renderResult(result: ComparisonResult, intended: RouteData, exported: R
     ? `${result.divergences.length} route change${result.divergences.length === 1 ? ' needs' : 's need'} a look`
     : 'The route lines stay within your threshold';
   byId('verdict-copy').textContent = hasDivergence
-    ? `${formatDistance(result.affectedLengthM)} of the intended route falls within flagged review zones. Check these before sharing the export.`
+    ? `${formatDistance(result.affectedLengthM)} of the planned route falls within flagged review zones. Check these before sharing the export.`
     : `No sampled separation exceeded ${result.thresholdM} m. Review the route visually and check access separately.`;
   byId('verdict-icon').textContent = hasDivergence ? '!' : '✓';
   byId('metric-fidelity').textContent = `${result.fidelityPercent.toFixed(1)}%`;
@@ -200,7 +204,7 @@ function renderResult(result: ComparisonResult, intended: RouteData, exported: R
     list.innerHTML = '<li class="empty-review"><span aria-hidden="true">✓</span><div><strong>No material review zones</strong><small>The lines remain within the chosen threshold in both comparison directions.</small></div></li>';
   }
   byId('review-summary').textContent = hasDivergence
-    ? `Work through ${result.divergences.length} flagged zone${result.divergences.length === 1 ? '' : 's'} from the start of the intended route.`
+    ? `Work through ${result.divergences.length} flagged zone${result.divergences.length === 1 ? '' : 's'} from the start of the planned route.`
     : 'No zones are flagged, but complete the route checks below.';
   results.hidden = false;
   requestAnimationFrame(() => results.scrollIntoView({ behavior: 'smooth', block: 'start' }));
@@ -211,32 +215,37 @@ byId('divergence-list').addEventListener('click', (event) => {
   if (button) focusDivergence(Number(button.dataset.zone));
 });
 
-compareButton.addEventListener('click', () => {
+function runComparison(delay = 30): Promise<void> {
   const intended = routes.intended;
   const exported = routes.exported;
-  if (!intended || !exported) return;
+  if (!intended || !exported) return Promise.resolve();
   const threshold = Number(thresholdInput.value);
   if (!Number.isFinite(threshold) || threshold < 10 || threshold > 500) {
     thresholdInput.setCustomValidity('Choose a threshold from 10 to 500 metres.');
     thresholdInput.reportValidity();
-    return;
+    return Promise.resolve();
   }
   thresholdInput.setCustomValidity('');
   compareButton.classList.add('is-working');
   byId('analysis-error').textContent = '';
   byId('analysis-status').textContent = 'Comparing routes…';
-  window.setTimeout(() => {
-    try {
-      lastResult = compareRoutes(intended.points, exported.points, threshold);
-      renderResult(lastResult, intended, exported);
-      byId('analysis-status').textContent = `Comparison complete. ${lastResult.divergences.length} review zones found.`;
-    } catch {
-      byId('analysis-error').textContent = 'The comparison could not finish. Try simplified GPX exports with fewer track points.';
-      byId('analysis-status').textContent = 'The comparison could not finish.';
-    } finally {
-      compareButton.classList.remove('is-working');
-    }
-  }, 30);
+  return new Promise((resolve) => window.setTimeout(() => {
+      try {
+        lastResult = compareRoutes(intended.points, exported.points, threshold);
+        renderResult(lastResult, intended, exported);
+        byId('analysis-status').textContent = `Comparison complete. ${lastResult.divergences.length} review ${lastResult.divergences.length === 1 ? 'zone' : 'zones'} found.`;
+      } catch {
+        byId('analysis-error').textContent = 'The comparison could not finish. Try simplified GPX exports with fewer track points.';
+        byId('analysis-status').textContent = 'The comparison could not finish.';
+      } finally {
+        compareButton.classList.remove('is-working');
+        resolve();
+      }
+    }, delay));
+}
+
+compareButton.addEventListener('click', () => {
+  void runComparison();
 });
 
 thresholdInput.addEventListener('input', () => {
@@ -269,6 +278,52 @@ window.addEventListener('online', updateNetworkStatus);
 window.addEventListener('offline', updateNetworkStatus);
 updateNetworkStatus();
 
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
-  window.addEventListener('load', () => { void navigator.serviceWorker.register('/sw.js').catch(() => undefined); });
+async function resetDemo(): Promise<void> {
+  delete routes.intended;
+  delete routes.exported;
+  lastResult = undefined;
+  results.hidden = true;
+  thresholdInput.value = '50';
+  thresholdInput.setCustomValidity('');
+  for (const kind of ['intended', 'exported'] as RouteKind[]) {
+    byId<HTMLInputElement>(`${kind}-file`).value = '';
+    byId(`${kind}-manifest`).hidden = true;
+    byId(`${kind}-error`).textContent = '';
+    document.querySelector<HTMLElement>(`.upload-panel[data-kind="${kind}"]`)?.classList.remove('has-file');
+  }
+  document.querySelectorAll<HTMLInputElement>('.checklist input').forEach((input) => { input.checked = false; });
+  routes.intended = parseGpxText(intendedDemo, 'saturday-river-loop-planned.gpx');
+  routes.exported = parseGpxText(exportedDemo, 'saturday-river-loop-device-export.gpx');
+  updateManifest('intended');
+  updateManifest('exported');
+  await runComparison(0);
+  byId('analysis-status').textContent = 'Demo reset. The sample comparison is ready.';
 }
+
+byId('reset-demo').addEventListener('click', () => { void resetDemo(); });
+
+function showUpdateNotice(): void {
+  byId('update-notice').hidden = false;
+}
+
+window.addEventListener('route-update-available', showUpdateNotice);
+byId('reload-update').addEventListener('click', () => window.location.reload());
+
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    if (event.data?.type === 'APP_UPDATE_AVAILABLE') showUpdateNotice();
+  });
+  window.addEventListener('load', () => {
+    void navigator.serviceWorker.register('/sw.js').then((registration) => {
+      if (registration.waiting && navigator.serviceWorker.controller) showUpdateNotice();
+      registration.addEventListener('updatefound', () => {
+        const worker = registration.installing;
+        worker?.addEventListener('statechange', () => {
+          if (worker.state === 'installed' && navigator.serviceWorker.controller) showUpdateNotice();
+        });
+      });
+    }).catch(() => undefined);
+  });
+}
+
+if (isDemo) window.addEventListener('load', () => { void resetDemo(); }, { once: true });

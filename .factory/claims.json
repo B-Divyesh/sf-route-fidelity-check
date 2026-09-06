@@ -1,0 +1,128 @@
+[
+  {
+    "id": "demo-sandbox",
+    "claim": "Try it with sample data opens a complete comparison in an isolated demo that can be reset or left without changing real data.",
+    "where": "Home first screen, demo banner, README",
+    "test": "npm run test:claims -- --grep @claim:demo-sandbox",
+    "sandbox": "Fresh browser state; click the home sample action once; assert result, sample label, reset, start-real, and an untouched real-data sentinel."
+  },
+  {
+    "id": "compare-separation",
+    "claim": "The tool compares planned and exported GPX routes and flags sections beyond the chosen distance.",
+    "where": "Home metadata, first screen, README",
+    "test": "npm run test:claims -- --grep @claim:compare-separation",
+    "sandbox": "Demo pair; assert a measured separation above 50 metres and one visible review zone."
+  },
+  {
+    "id": "gpx-inputs",
+    "claim": "The tool loads GPX tracks and routes through a file chooser or drag and drop.",
+    "where": "Upload controls, How it works, README",
+    "test": "npm run test:claims -- --grep @claim:gpx-inputs",
+    "sandbox": "Demo entry; replace the sample with a track through the file input and a route through a drop event, then compare them."
+  },
+  {
+    "id": "density-normalization",
+    "claim": "Distance sampling avoids false changes from point density or reversed route direction.",
+    "where": "How it works, README",
+    "test": "npm run test:claims -- --grep @claim:density-normalization",
+    "sandbox": "Demo entry; compare a dense line with the same sparse reversed line and assert 100 percent fidelity with no zones."
+  },
+  {
+    "id": "bidirectional-changes",
+    "claim": "Two-way measurement catches exported detours, shortcuts, and added loops.",
+    "where": "README",
+    "test": "npm run test:claims -- --grep @claim:bidirectional-changes",
+    "sandbox": "Demo entry; run detour, shortcut, and added-loop pairs and assert every pair produces a review zone."
+  },
+  {
+    "id": "review-metrics",
+    "claim": "A comparison reports fidelity, largest separation, distance change, and review-zone count.",
+    "where": "Results, README",
+    "test": "npm run test:claims -- --grep @claim:review-metrics",
+    "sandbox": "Complete demo result; assert four populated metric outcomes with units and a zone count."
+  },
+  {
+    "id": "tile-free-trace",
+    "claim": "The aligned route trace can focus a review zone without map tiles or route services.",
+    "where": "Results, README",
+    "test": "npm run test:claims -- --grep @claim:tile-free-trace",
+    "sandbox": "Demo result with request capture; assert both SVG lines, a changed view box after focus, reset, and first-party-only requests."
+  },
+  {
+    "id": "print-checklist",
+    "claim": "The populated ride-leader checklist can be printed.",
+    "where": "Results, README",
+    "test": "npm run test:claims -- --grep @claim:print-checklist",
+    "sandbox": "Demo result; assert four checklist items and observe the browser print call after using Print checklist."
+  },
+  {
+    "id": "copy-summary",
+    "claim": "The completed comparison summary can be copied.",
+    "where": "Results, README",
+    "test": "npm run test:claims -- --grep @claim:copy-summary",
+    "sandbox": "Demo result with clipboard permission; copy and assert the clipboard contains the measured zone, threshold, and scope warning."
+  },
+  {
+    "id": "offline-reload",
+    "claim": "The comparison works offline after the first visit.",
+    "where": "Home first screen, network state, README",
+    "test": "npm run test:claims -- --grep @claim:offline-reload",
+    "sandbox": "Dedicated fresh phone context; load demo, wait for service-worker control, go offline, reload, and assert the completed result."
+  },
+  {
+    "id": "local-processing",
+    "claim": "GPX files and comparison results stay in browser memory and are not uploaded.",
+    "where": "Home, Privacy, README",
+    "test": "npm run test:claims -- --grep @claim:local-processing",
+    "sandbox": "Demo entry; upload named private fixtures while recording requests and storage, then assert no non-GET request or browser-storage write."
+  },
+  {
+    "id": "ephemeral-state",
+    "claim": "Refreshing or closing the real comparison clears route and checklist state.",
+    "where": "Privacy, README",
+    "test": "npm run test:claims -- --grep @claim:ephemeral-state",
+    "sandbox": "Enter through demo, start for real, complete a named comparison, reload, and assert the files and result are gone."
+  },
+  {
+    "id": "tracking-free",
+    "claim": "The app uses no accounts, analytics, ads, cookies, tracking pixels, third-party scripts, or map tiles.",
+    "where": "Privacy, README",
+    "test": "npm run test:claims -- --grep @claim:tracking-free",
+    "sandbox": "Fresh context and full demo flow; capture every request and cookie, asserting first-party-only traffic and no cookies."
+  },
+  {
+    "id": "free-use",
+    "claim": "The route comparison is free to use.",
+    "where": "Home first screen, Terms, README",
+    "test": "npm run test:claims -- --grep @claim:free-use",
+    "sandbox": "Fresh demo; complete, copy, and print a comparison without credentials, checkout navigation, or outside requests."
+  },
+  {
+    "id": "file-size-boundary",
+    "claim": "GPX files up to and including 15 MB are accepted.",
+    "where": "Upload controls, README",
+    "test": "npm run test:claims -- --grep @claim:file-size-boundary",
+    "sandbox": "Demo entry; upload valid GPX at exactly 15 MiB and then at 15 MiB plus one byte, asserting acceptance and rejection."
+  },
+  {
+    "id": "threshold-range",
+    "claim": "The separation threshold accepts 10 to 500 metres inclusive.",
+    "where": "Threshold control, README",
+    "test": "npm run test:claims -- --grep @claim:threshold-range",
+    "sandbox": "Demo pair; reject 9 and 501, then complete comparisons at 10 and 500 metres."
+  },
+  {
+    "id": "corpus-recall",
+    "claim": "The checked-in 30-pair corpus detects at least 90 percent of known material changes and renders each result within 15 seconds.",
+    "where": "README, corpus documentation, handoff",
+    "test": "npm run test:claims -- --grep @claim:corpus-recall",
+    "sandbox": "Demo entry; load all 30 planned/exported GPX pairs through the product, measure recall and each result time, and check three clear controls."
+  },
+  {
+    "id": "installable-pwa",
+    "claim": "The product provides a standalone web-app manifest with 192 px, 512 px, and maskable icons.",
+    "where": "README, manifest",
+    "test": "npm run test:claims -- --grep @claim:installable-pwa",
+    "sandbox": "Demo page; retrieve its linked manifest and every declared icon, then assert standalone display and required icon purposes."
+  }
+]

@@ -98,3 +98,30 @@ movement and route drawing are removed; state changes are immediate.
 
 All interface icons and the route diagram are original inline SVG authored for
 this product. Generated imagery is disclosed in the footer.
+
+### Repair 3 derivatives
+
+- `public/assets/sf-route-fidelity-check-social.webp` is a deterministic
+  1200×630 centre crop of the original generated landscape. It adds no source
+  material, text, or logos.
+- The 192 px, 512 px, maskable, and Apple touch icons are deterministic raster
+  renders of the original `public/favicon.svg` route mark. The maskable version
+  keeps a 10% `night-950` safe area.
+- `scripts/render-icons.mjs` records the repeatable browser-rendering method.
+
+## Repair 3 interaction additions
+
+The first screen now leads with the exact comparison job, audience, sample
+action, and three facts. On phones, the landscape is removed from the first
+screen so the job and action remain visible without scrolling. This is an
+intentional responsive reduction, not a hidden loading state.
+
+Demo mode uses a sticky, compact `night-900` strip with a mint outline. The
+strip keeps the sample label, reset action, and start-real action visible while
+the rider reviews a long trace. An update notice uses the same instrument-panel
+shape and waits for an explicit reload, so it never interrupts a comparison.
+
+The legal, offline, and 404 pages reuse the route mark, narrow display type,
+palette, 8 px rhythm, focus ring, header navigation, and footer build line.
+They remain quieter than the comparison screen while retaining this product's
+identity.

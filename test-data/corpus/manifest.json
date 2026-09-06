@@ -1,0 +1,249 @@
+{
+  "version": 1,
+  "provenance": "Purpose-built anonymous route geometry. It contains no rider, account, or device data.",
+  "expected_positive_pairs": 27,
+  "expected_clear_pairs": 3,
+  "pairs": [
+    {
+      "id": "pair-01",
+      "kind": "exported detour",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-01-planned.gpx",
+      "exported": "pair-01-exported.gpx"
+    },
+    {
+      "id": "pair-02",
+      "kind": "exported detour",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-02-planned.gpx",
+      "exported": "pair-02-exported.gpx"
+    },
+    {
+      "id": "pair-03",
+      "kind": "exported detour",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-03-planned.gpx",
+      "exported": "pair-03-exported.gpx"
+    },
+    {
+      "id": "pair-04",
+      "kind": "exported detour",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-04-planned.gpx",
+      "exported": "pair-04-exported.gpx"
+    },
+    {
+      "id": "pair-05",
+      "kind": "exported detour",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-05-planned.gpx",
+      "exported": "pair-05-exported.gpx"
+    },
+    {
+      "id": "pair-06",
+      "kind": "exported detour",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-06-planned.gpx",
+      "exported": "pair-06-exported.gpx"
+    },
+    {
+      "id": "pair-07",
+      "kind": "exported detour",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-07-planned.gpx",
+      "exported": "pair-07-exported.gpx"
+    },
+    {
+      "id": "pair-08",
+      "kind": "exported detour",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-08-planned.gpx",
+      "exported": "pair-08-exported.gpx"
+    },
+    {
+      "id": "pair-09",
+      "kind": "exported detour",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-09-planned.gpx",
+      "exported": "pair-09-exported.gpx"
+    },
+    {
+      "id": "pair-10",
+      "kind": "exported shortcut",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-10-planned.gpx",
+      "exported": "pair-10-exported.gpx"
+    },
+    {
+      "id": "pair-11",
+      "kind": "exported shortcut",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-11-planned.gpx",
+      "exported": "pair-11-exported.gpx"
+    },
+    {
+      "id": "pair-12",
+      "kind": "exported shortcut",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-12-planned.gpx",
+      "exported": "pair-12-exported.gpx"
+    },
+    {
+      "id": "pair-13",
+      "kind": "exported shortcut",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-13-planned.gpx",
+      "exported": "pair-13-exported.gpx"
+    },
+    {
+      "id": "pair-14",
+      "kind": "exported shortcut",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-14-planned.gpx",
+      "exported": "pair-14-exported.gpx"
+    },
+    {
+      "id": "pair-15",
+      "kind": "exported shortcut",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-15-planned.gpx",
+      "exported": "pair-15-exported.gpx"
+    },
+    {
+      "id": "pair-16",
+      "kind": "exported shortcut",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-16-planned.gpx",
+      "exported": "pair-16-exported.gpx"
+    },
+    {
+      "id": "pair-17",
+      "kind": "exported shortcut",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-17-planned.gpx",
+      "exported": "pair-17-exported.gpx"
+    },
+    {
+      "id": "pair-18",
+      "kind": "exported shortcut",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-18-planned.gpx",
+      "exported": "pair-18-exported.gpx"
+    },
+    {
+      "id": "pair-19",
+      "kind": "exported loop",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-19-planned.gpx",
+      "exported": "pair-19-exported.gpx"
+    },
+    {
+      "id": "pair-20",
+      "kind": "exported loop",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-20-planned.gpx",
+      "exported": "pair-20-exported.gpx"
+    },
+    {
+      "id": "pair-21",
+      "kind": "exported loop",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-21-planned.gpx",
+      "exported": "pair-21-exported.gpx"
+    },
+    {
+      "id": "pair-22",
+      "kind": "exported loop",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-22-planned.gpx",
+      "exported": "pair-22-exported.gpx"
+    },
+    {
+      "id": "pair-23",
+      "kind": "exported loop",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-23-planned.gpx",
+      "exported": "pair-23-exported.gpx"
+    },
+    {
+      "id": "pair-24",
+      "kind": "exported loop",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-24-planned.gpx",
+      "exported": "pair-24-exported.gpx"
+    },
+    {
+      "id": "pair-25",
+      "kind": "exported loop",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-25-planned.gpx",
+      "exported": "pair-25-exported.gpx"
+    },
+    {
+      "id": "pair-26",
+      "kind": "exported loop",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-26-planned.gpx",
+      "exported": "pair-26-exported.gpx"
+    },
+    {
+      "id": "pair-27",
+      "kind": "exported loop",
+      "material_change": true,
+      "threshold_m": 50,
+      "planned": "pair-27-planned.gpx",
+      "exported": "pair-27-exported.gpx"
+    },
+    {
+      "id": "pair-28",
+      "kind": "same line with more points",
+      "material_change": false,
+      "threshold_m": 50,
+      "planned": "pair-28-planned.gpx",
+      "exported": "pair-28-exported.gpx"
+    },
+    {
+      "id": "pair-29",
+      "kind": "same line reversed",
+      "material_change": false,
+      "threshold_m": 50,
+      "planned": "pair-29-planned.gpx",
+      "exported": "pair-29-exported.gpx"
+    },
+    {
+      "id": "pair-30",
+      "kind": "same route-point line",
+      "material_change": false,
+      "threshold_m": 50,
+      "planned": "pair-30-planned.gpx",
+      "exported": "pair-30-exported.gpx"
+    }
+  ]
+}
+

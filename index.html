@@ -4,9 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#061413" />
+    <meta name="description" content="Compare a planned GPX route with an app or device export and review changed sections before a ride." />
+    <link rel="canonical" href="https://route-fidelity-check.sociobot.in/" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta name="description" content="Compare an intended GPX route with an exported route and spot silent rerouting before you ride." />
-    <title>Route Fidelity Check — compare GPX route handoffs</title>
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Route Fidelity Check" />
+    <meta property="og:title" content="Compare planned and exported GPX routes" />
+    <meta property="og:description" content="Review route changes before a cyclist or club group follows an exported GPX file." />
+    <meta property="og:url" content="https://route-fidelity-check.sociobot.in/" />
+    <meta property="og:image" content="https://route-fidelity-check.sociobot.in/assets/sf-route-fidelity-check-social.webp" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Mint and blue route lines separate around a coral detour on dark glass terrain." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Compare planned and exported GPX routes" />
+    <meta name="twitter:description" content="Review route changes before a cyclist or club group follows an exported GPX file." />
+    <meta name="twitter:image" content="https://route-fidelity-check.sociobot.in/assets/sf-route-fidelity-check-social.webp" />
+    <title>Route Fidelity Check — Compare GPX route exports</title>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to route comparison</a>
@@ -15,39 +31,56 @@
         <svg aria-hidden="true" viewBox="0 0 32 32" width="32" height="32"><path d="M5 23c4-11 7-11 11-4s7 7 11-8"/><path d="M5 18c4-11 8-11 12-4s6 5 10-5"/></svg>
         <span>Route fidelity check</span>
       </a>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="/demo">Demo</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="/privacy/">Privacy</a>
+      </nav>
       <div id="network-status" class="network-status" role="status" aria-live="polite">Local-only · ready</div>
     </header>
+
+    <aside id="demo-banner" class="demo-banner" aria-label="Demo controls" hidden>
+      <p><strong>Demo — sample data, nothing is saved</strong><span>Saturday river loop and its changed device export</span></p>
+      <div>
+        <button id="reset-demo" type="button">Reset demo</button>
+        <a id="start-real" href="/">Start for real</a>
+      </div>
+    </aside>
 
     <main id="main">
       <section class="hero" aria-labelledby="page-title">
         <div class="hero-copy">
-          <p class="eyebrow"><span></span> GPX handoff preflight</p>
-          <h1 id="page-title">Did your route make the trip?</h1>
-          <p class="lede">Compare the line you planned with the one your app or device exported. Find silent detours before your riders do.</p>
-          <div class="privacy-note">
-            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0110 0v3M5 10h14v10H5z"/></svg>
-            Files stay on this device. Nothing is uploaded.
+          <h1 id="page-title" tabindex="-1">Compare planned and exported GPX routes</h1>
+          <p class="lede">For cyclists and club ride leaders checking whether an app or device changed a route before the group follows it.</p>
+          <div class="hero-actions">
+            <a id="load-example" class="primary-link" href="/demo">Try it with sample data</a>
+            <span>A river-route detour loads with the comparison complete.</span>
           </div>
+          <a class="real-start-link" href="#compare-heading">Choose your own GPX files</a>
+          <ul class="plain-facts" aria-label="Product facts">
+            <li>Your GPX files stay on this device.</li>
+            <li>Works offline after the first visit.</li>
+            <li>Free to use.</li>
+          </ul>
         </div>
         <figure class="hero-art">
-          <img src="/assets/route-landscape.webp" width="1200" height="800" fetchpriority="high" decoding="async" alt="Two luminous route lines cross a dark glass landscape; one line detours before rejoining." />
-          <figcaption><i class="line mint"></i> Intended <i class="line blue"></i> Exported <i class="line coral"></i> Difference</figcaption>
+          <img src="/assets/route-landscape.webp" width="1200" height="800" fetchpriority="high" decoding="async" alt="Two luminous route lines cross dark glass terrain; one line detours before rejoining." />
+          <figcaption><i class="line mint"></i> Planned <i class="line blue"></i> Exported <i class="line coral"></i> Difference</figcaption>
         </figure>
       </section>
 
       <section class="workbench" aria-labelledby="compare-heading">
         <div class="section-heading">
-          <div><p class="step">01 / Add routes</p><h2 id="compare-heading">Choose the two GPX files</h2></div>
-          <button id="load-example" class="text-button" type="button">Try an example</button>
+          <div><p class="step">1 · Add routes</p><h2 id="compare-heading">Choose your two GPX files</h2></div>
         </div>
 
         <div class="upload-grid">
           <div class="upload-panel" data-kind="intended">
-            <div class="route-label"><span class="route-number">A</span><div><strong>Intended route</strong><small>The original line you meant to ride</small></div></div>
+            <div class="route-label"><span class="route-number">A</span><div><strong>Planned route</strong><small>The original line you meant to ride</small></div></div>
             <input id="intended-file" class="file-input" type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml" tabindex="-1" aria-hidden="true" />
             <button id="intended-chooser" class="drop-zone" type="button">
               <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5l5 5M5 14v5h14v-5"/></svg>
-              <span><b>Choose intended GPX</b><em>or drop it here · up to 15 MB</em></span>
+              <span><b>Choose planned GPX</b><em>or drop it here · up to 15 MB</em></span>
             </button>
             <div id="intended-manifest" class="manifest" hidden></div>
             <p id="intended-error" class="file-error" role="alert"></p>
@@ -68,7 +101,7 @@
           <div class="threshold-control">
             <label for="threshold">Flag separation over</label>
             <div class="threshold-input"><input id="threshold" type="number" inputmode="numeric" min="10" max="500" step="10" value="50" aria-describedby="threshold-help" /><span>metres</span></div>
-            <p id="threshold-help">50 m is a useful first pass for road and trail handoffs.</p>
+            <p id="threshold-help">Choose 10 to 500 metres. Smaller numbers flag closer changes.</p>
           </div>
           <button id="compare-button" class="primary-button" type="button" disabled>
             <span>Compare routes</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-5-5l5 5-5 5"/></svg>
@@ -81,33 +114,33 @@
       <section id="results" class="results" aria-labelledby="results-heading" hidden>
         <div class="verdict">
           <div class="verdict-icon" id="verdict-icon" aria-hidden="true"></div>
-          <div><p class="step">02 / Review</p><h2 id="results-heading"></h2><p id="verdict-copy"></p></div>
+          <div><p class="step">2 · Review changes</p><h2 id="results-heading"></h2><p id="verdict-copy"></p></div>
           <button id="print-button" class="secondary-button" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 9V4h10v5M7 17H5a2 2 0 01-2-2v-4a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2h-2M7 14h10v7H7z"/></svg> Print checklist</button>
         </div>
 
         <dl class="metrics">
           <div><dt>Fidelity</dt><dd><span id="metric-fidelity">—</span><small>samples within threshold</small></dd></div>
           <div><dt>Largest separation</dt><dd><span id="metric-separation">—</span><small>nearest-line distance</small></dd></div>
-          <div><dt>Distance change</dt><dd><span id="metric-distance">—</span><small>exported minus intended</small></dd></div>
-          <div><dt>Review zones</dt><dd><span id="metric-zones">—</span><small>material divergences</small></dd></div>
+          <div><dt>Distance change</dt><dd><span id="metric-distance">—</span><small>exported minus planned</small></dd></div>
+          <div><dt>Review zones</dt><dd><span id="metric-zones">—</span><small>changed route sections</small></dd></div>
         </dl>
 
         <div class="map-section">
           <div class="map-heading">
-            <div><h3>Aligned route trace</h3><p>Lines are fitted to the same coordinate space. No map tiles or route services are used.</p></div>
+            <div><h3>Aligned route trace</h3><p>Both lines use the same coordinate space. The view uses no map tiles or route services.</p></div>
             <button id="reset-view" class="icon-button" type="button" hidden>Show full route</button>
           </div>
           <div id="route-map" class="route-map" role="img" aria-labelledby="map-title map-description"></div>
-          <div class="map-legend" aria-hidden="true"><span><i class="line mint"></i> Intended</span><span><i class="line blue"></i> Exported</span><span><i class="dash coral"></i> Over threshold</span></div>
+          <div class="map-legend" aria-hidden="true"><span><i class="line mint"></i> Planned</span><span><i class="line blue"></i> Exported</span><span><i class="dash coral"></i> Over threshold</span></div>
         </div>
 
         <div class="review-section">
-          <div class="review-heading"><div><h3>Ride leader’s review</h3><p id="review-summary"></p></div><button id="copy-summary" class="text-button" type="button">Copy summary</button></div>
+          <div class="review-heading"><div><h3>Ride leader review</h3><p id="review-summary"></p></div><button id="copy-summary" class="text-button" type="button">Copy summary</button></div>
           <ol id="divergence-list" class="divergence-list"></ol>
           <div class="checklist">
             <h3>Before you send the route</h3>
             <label><input type="checkbox" /> <span>Inspect every flagged zone in the source and destination apps.</span></label>
-            <label><input type="checkbox" /> <span>Confirm the intended roads and trails are legal, open, and suitable.</span></label>
+            <label><input type="checkbox" /> <span>Confirm the planned roads and trails are legal, open, and suitable.</span></label>
             <label><input type="checkbox" /> <span>Re-export after adding shaping points, then compare again.</span></label>
             <label><input type="checkbox" /> <span>Share the final file and any cautions with the group.</span></label>
           </div>
@@ -115,20 +148,33 @@
         </div>
       </section>
 
-      <section class="how-it-works" aria-labelledby="how-heading">
-        <p class="step">Method</p><h2 id="how-heading">A neutral check between route engines</h2>
+      <section id="how-it-works" class="how-it-works" aria-labelledby="how-heading">
+        <h2 id="how-heading">How it works</h2>
         <div class="method-grid">
-          <div><span>1</span><h3>Read locally</h3><p>GPX tracks or routes are parsed in your browser and never leave your device.</p></div>
-          <div><span>2</span><h3>Normalize density</h3><p>Both lines are sampled by distance, so extra track points do not distort the result.</p></div>
-          <div><span>3</span><h3>Check both ways</h3><p>Each route is measured against the other to catch detours, shortcuts, and extra loops.</p></div>
+          <div><span>1</span><h3>Load both files</h3><p>Choose GPX tracks or routes. The files remain in this browser tab.</p></div>
+          <div><span>2</span><h3>Compare the lines</h3><p>The check samples by distance and measures each route against the other.</p></div>
+          <div><span>3</span><h3>Review each change</h3><p>Use the trace and printable checklist before you share the exported route.</p></div>
         </div>
+      </section>
+
+      <section class="limits" aria-labelledby="limits-heading">
+        <h2 id="limits-heading">What this check does not do</h2>
+        <p>It does not plan routes or provide turn-by-turn navigation.</p>
+        <p>It does not confirm safety, access, surface, traffic, closures, or legal use.</p>
+        <p>Inspect flagged sections in your route or mapping app before you ride.</p>
       </section>
     </main>
 
-    <footer>
-      <p><strong>Route Fidelity Check</strong> · A free, local-first utility from <a href="https://sociobot.in">Sociobot</a>.</p>
-      <nav aria-label="Legal"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="https://github.com/B-Divyesh/sf-route-fidelity-check">Source</a></nav>
-      <p class="asset-note">Landscape artwork generated for this product with Azure AI Foundry.</p>
+    <aside id="update-notice" class="update-notice" role="status" aria-live="polite" hidden>
+      <span>An updated version is ready.</span>
+      <button id="reload-update" type="button">Reload updated app</button>
+    </aside>
+
+    <footer class="site-footer">
+      <p><strong>Route Fidelity Check</strong><span>Compare planned and exported GPX routes before a ride.</span></p>
+      <nav aria-label="Footer navigation"><a href="/demo">Demo</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="https://github.com/B-Divyesh/sf-route-fidelity-check">Source</a></nav>
+      <p class="factory-note">Built by Param Factory · v1.1.0 · build 2026.09.06</p>
+      <p class="asset-note">Landscape artwork was generated for this product with Azure AI Foundry.</p>
     </footer>
     <script type="module" src="/src/main.ts"></script>
   </body>
